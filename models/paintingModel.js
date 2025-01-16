@@ -37,13 +37,5 @@ exports.validatePainting = (_reqBody) => {
 
 
 
-// exports.validateUpdate = (_reqBody) => {
-//     let joiSchema = Joi.object({
-//         email: Joi.forbidden(),
-//         password: Joi.forbidden(),
-//         name: Joi.string().min(2).max(200).allow(null, ""),
-//         user_name: Joi.string().min(1).max(16).allow(null, ""),
-//     })
-//     return joiSchema.validate(_reqBody)
-// }
+
 
