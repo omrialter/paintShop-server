@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
 
 router.get("/getAll", auth, async (req, res) => {
     try {
-        let data = await ContactModel.find({});
+        let data = await ContactModel.find({}).sort('-date_created');;
         res.json(data);
     }
     catch (err) {
