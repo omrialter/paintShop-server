@@ -1,5 +1,5 @@
 const express = require("express");
-const { authAdmin } = require("../auth/auth");
+const { auth } = require("../auth/auth");
 const { ContactModel, validateContact } = require("../models/contactModel");
 const router = express.Router();
 
@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
 })
 
 
-router.get("/getAll", authAdmin, async (req, res) => {
+router.get("/getAll", auth, async (req, res) => {
     try {
         let data = await ContactModel.find({});
         res.json(data);

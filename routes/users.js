@@ -11,14 +11,6 @@ router.get("/", async (req, res) => {
 })
 
 
-// only check the token 
-router.get("/checkToken", authAdmin, async (req, res) => {
-  res.json({ _id: req.tokenData._id, role: req.tokenData.role });
-})
-
-
-
-
 // Create a new user
 // Domain/users
 router.post("/", async (req, res) => {
