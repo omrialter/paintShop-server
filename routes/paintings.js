@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { PaintingModel, validatePainting } = require("../models/paintingModel")
-const { authAdmin } = require("../auth/auth.js");
+const { auth } = require("../auth/auth.js");
 
 router.get("/", async (req, res) => {
     res.json({ msg: "Paintings work" });
@@ -32,7 +32,7 @@ router.get("/count", async (req, res) => {
     }
 })
 
-router.post("/", authAdmin, async (req, res) => {
+router.post("/", auth, async (req, res) => {
     let validBody = validatePainting(req.body);
     if (validBody.error) {
         return res.status(400).json(validBody.error.details)
@@ -51,7 +51,7 @@ router.post("/", authAdmin, async (req, res) => {
 
 
 
-router.put("/:id", authAdmin, async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     let validBody = validatePainting(req.body);
 
     if (validBody.error) {
@@ -60,9 +60,7 @@ router.put("/:id", authAdmin, async (req, res) => {
     try {
         let id = req.params.id;
         let data;
-        if (req.tokenData.role == "admin") {
-            data = await PaintingModel.updateOne({ _id: id }, req.body);
-        }
+        data = await PaintingModel.updateOne({ _id: id }, req.body);
 
         res.json(data);
     }
@@ -74,7 +72,7 @@ router.put("/:id", authAdmin, async (req, res) => {
 
 
 
-router.patch("/changeAvailablity/:id", authAdmin, async (req, res) => {
+router.patch("/changeAvailablity/:id", auth, async (req, res) => {
     try {
         const id = req.params.id;
         const painting = await PaintingModel.findById(id);
@@ -84,7 +82,7 @@ router.patch("/changeAvailablity/:id", authAdmin, async (req, res) => {
 
         const updatedPainting = await PaintingModel.findByIdAndUpdate(
             id,
-            { available: !painting.available },  // Toggle the availability
+            { available: !painting.available },
             { new: true }
         );
 
@@ -96,13 +94,11 @@ router.patch("/changeAvailablity/:id", authAdmin, async (req, res) => {
 });
 
 
-router.delete("/:id", authAdmin, async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     let id = req.params.id;
     let data;
     try {
-        if (req.tokenData.role == "admin") {
-            data = await PaintingModel.deleteOne({ id: id });
-        }
+        data = await PaintingModel.deleteOne({ id: id });
 
         res.json(data);
     }
