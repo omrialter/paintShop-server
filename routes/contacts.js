@@ -19,10 +19,10 @@ router.get("/getAll", auth, async (req, res) => {
     }
 })
 
-router.get("/count", async (req, res) => {
+router.get("/count-unchecked", async (req, res) => {
     try {
         let perPage = req.query.perPage || 10;
-        const count = await ContactModel.countDocuments({});
+        const count = await ContactModel.countDocuments({ checked: false });
         res.json({ count, pages: Math.ceil(count / perPage) });
     }
     catch (err) {
@@ -47,5 +47,28 @@ router.post("/", async (req, res) => {
         res.status(502).json({ err })
     }
 })
+
+
+router.patch("/changeIsChecked/:id", auth, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const contactPost = await ContactModel.findById(id);
+        if (!contactPost) {
+            return res.status(404).json({ message: "Painting not found" });
+        }
+
+        const update = await ContactModel.findByIdAndUpdate(
+            id,
+            { checked: !contactPost.checked },
+            { new: true }
+        )
+        res.json(update);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(502).json({ err })
+    }
+})
+
 
 module.exports = router;

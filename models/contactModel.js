@@ -8,7 +8,9 @@ const contactSchema = new mongoose.Schema({
     email: String,
     subject: String,
     message: String,
-
+    checked: {
+        type: Boolean, default: false
+    },
     date_created: {
         type: Date, default: Date.now
     },
