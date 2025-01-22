@@ -1,8 +1,8 @@
 const express = require("express");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { UserModel, validateUser, validateLogin, createToken, validateUpdate, validateChangePass } = require("../models/userModel")
-const { authAdmin } = require("../auth/auth.js");
+const { UserModel, validateUser, validateLogin, createToken } = require("../models/userModel")
+const { auth } = require("../auth/auth.js");
 const router = express.Router();
 
 
@@ -10,6 +10,16 @@ router.get("/", async (req, res) => {
   res.json({ msg: "Users works Mate!" });
 })
 
+
+router.get("/checkToken", auth, async (req, res) => {
+  try {
+    res.json({ _id: req.tokenData._id });
+  }
+  catch (err) {
+    console.log(err);
+    res.status(502).json({ err })
+  }
+})
 
 // Create a new user
 // Domain/users
