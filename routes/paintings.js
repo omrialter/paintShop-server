@@ -18,6 +18,20 @@ router.get("/allPaintings", async (req, res) => {
     }
 })
 
+router.get("/OnePainting/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        let data = await PaintingModel.findOne({ _id: id })
+        res.json(data)
+    }
+    catch (err) {
+        console.log(err);
+        res.status(502).json({ err })
+    }
+})
+
+
+
 
 router.get("/count", async (req, res) => {
     try {
