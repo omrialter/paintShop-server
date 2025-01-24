@@ -133,7 +133,7 @@ router.delete("/:id", auth, async (req, res) => {
     let id = req.params.id;
     let data;
     try {
-        data = await PaintingModel.deleteOne({ id: id });
+        data = await PaintingModel.deleteOne({ _id: id });
 
         res.json(data);
     }
