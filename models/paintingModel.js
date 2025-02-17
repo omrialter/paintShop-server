@@ -35,6 +35,15 @@ exports.validatePainting = (_reqBody) => {
     return joiSchema.validate(_reqBody)
 }
 
+exports.validateUpdate = (_reqBody) => {
+    let joiSchema = Joi.object({
+        name: Joi.string().min(2).max(50).required(),
+        price: Joi.string().min(2).max(15).required(),
+        desc: Joi.string().min(3).max(60).required(),
+
+    })
+    return joiSchema.validate(_reqBody)
+}
 
 
 

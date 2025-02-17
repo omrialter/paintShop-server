@@ -2,6 +2,7 @@ const indexR = require("./index");
 const usersR = require("./users");
 const paintingsR = require("./paintings");
 const contactsR = require("./contacts");
+const purchasesR = require("./purchases");
 
 
 exports.routesInit = (app) => {
@@ -9,6 +10,7 @@ exports.routesInit = (app) => {
   app.use("/users", usersR);
   app.use("/paintings", paintingsR);
   app.use("/contacts", contactsR);
+  app.use("/purchases", purchasesR);
 
 
   app.use("/*", (req, res) => {

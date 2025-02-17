@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { PaintingModel, validatePainting } = require("../models/paintingModel")
+const { PaintingModel, validatePainting, validateUpdate } = require("../models/paintingModel")
 const { auth } = require("../auth/auth.js");
 const cloudinary = require("cloudinary").v2;
 const { config } = require("../config/secret");
@@ -87,7 +87,7 @@ router.post("/cloud", async (req, res) => {
 
 
 router.put("/:id", auth, async (req, res) => {
-    let validBody = validatePainting(req.body);
+    let validBody = validateUpdate(req.body);
 
     if (validBody.error) {
         return res.status(400).json(validBody.error.details)
