@@ -3,6 +3,7 @@ const usersR = require("./users");
 const paintingsR = require("./paintings");
 const contactsR = require("./contacts");
 const purchasesR = require("./purchases");
+const paymentsR = require("./payments");
 
 
 exports.routesInit = (app) => {
@@ -11,6 +12,7 @@ exports.routesInit = (app) => {
   app.use("/paintings", paintingsR);
   app.use("/contacts", contactsR);
   app.use("/purchases", purchasesR);
+  app.use("/payments", paymentsR);
 
 
   app.use("/*", (req, res) => {
