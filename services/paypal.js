@@ -2,22 +2,6 @@ const axios = require('axios')
 
 
 
-exports.getTokenOk = async () => {
-    const response = await axios({
-        url: process.env.PAYPAL_URL + '/v1/oauth2/token',
-        method: 'post',
-        data: 'grant_type=client_credentials',
-        auth: {
-            username: process.env.PAYPAL_CLIENT_ID,
-            password: process.env.PAYPAL_SECRET
-        }
-    })
-
-
-    return response.data;
-}
-
-
 async function generateAccessToken() {
 
     const response = await axios({
@@ -34,7 +18,7 @@ async function generateAccessToken() {
     return response.data.access_token
 }
 
-exports.createOrder = async () => {
+exports.createOrder = async (items, total) => {
 
 
     const accessToken = await generateAccessToken()
@@ -50,25 +34,21 @@ exports.createOrder = async () => {
             intent: 'CAPTURE',
             purchase_units: [
                 {
-                    items: [
-                        {
-                            name: 'Painting',
-                            description: 'Description of the painting',
-                            quantity: 1,
-                            unit_amount: {
-                                currency_code: 'ILS',
-                                value: '100.00'
-                            }
+                    items: items.map(item => ({
+                        name: item.name,
+                        quantity: '1',
+                        unit_amount: {
+                            currency_code: 'USD',
+                            value: item.value
                         }
-                    ],
-
+                    })),
                     amount: {
-                        currency_code: 'ILS',
-                        value: '100.00',
+                        currency_code: 'USD',
+                        value: total,
                         breakdown: {
                             item_total: {
-                                currency_code: 'ILS',
-                                value: '100.00'
+                                currency_code: 'USD',
+                                value: total,
                             }
                         }
                     }
@@ -87,6 +67,13 @@ exports.createOrder = async () => {
     return response.data.links.find(link => link.rel === 'approve').href
 }
 
+
+
+
+
+
+
+
 exports.capturePayment = async (orderId) => {
     const accessToken = await generateAccessToken();
 
@@ -102,7 +89,7 @@ exports.capturePayment = async (orderId) => {
         console.log("PayPal capture response:", response.data);
         return response.data;
     } catch (error) {
-        // Detailed log here:
+
         if (error.response) {
             console.error("Detailed PayPal Error:", error.response.data);
         } else {
