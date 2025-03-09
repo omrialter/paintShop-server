@@ -9,23 +9,13 @@ router.get("/", async (req, res) => {
 })
 
 
-router.get("/getToken", async (req, res) => {
+
+
+router.post('/pay', async (req, res) => {
     try {
-        const data = await paypal.getTokenOk();
-        res.json({ data });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send('Error creating PayPal order');
-    }
-})
-
-
-
-router.get('/pay', async (req, res) => {
-    try {
-        const url = await paypal.createOrder()
+        const { items, total } = req.body;
+        const url = await paypal.createOrder(items, total)
         res.json(url);
-        // res.redirect(url)
     } catch (error) {
         res.send('Error: ' + error)
     }
@@ -35,7 +25,7 @@ router.get('/pay', async (req, res) => {
 router.get('/completeOrder', async (req, res) => {
     try {
         const token = req.query.token;
-        const result = await paypal.capturePayment(token);
+        await paypal.capturePayment(token);
         res.send('Payment successfully captured');
     } catch (error) {
         console.error('Error capturing payment:', error);

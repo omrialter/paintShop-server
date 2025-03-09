@@ -107,26 +107,43 @@ router.put("/:id", auth, async (req, res) => {
 
 
 
-router.patch("/changeAvailablity/:id", auth, async (req, res) => {
+
+
+router.patch('/updateAvailability', async (req, res) => {
     try {
-        const id = req.params.id;
-        const painting = await PaintingModel.findById(id);
-        if (!painting) {
-            return res.status(404).json({ message: "Painting not found" });
+        const { ids } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ message: "Please provide an array of painting IDs." });
         }
 
-        const updatedPainting = await PaintingModel.findByIdAndUpdate(
-            id,
-            { available: !painting.available },
-            { new: true }
+        const paintings = await PaintingModel.find({ _id: { $in: ids } });
+
+        if (paintings.length !== ids.length) {
+            return res.status(404).json({ message: "One or more paintings not found." });
+        }
+
+        const updatePromises = paintings.map(painting =>
+            PaintingModel.findByIdAndUpdate(
+                painting._id,
+                { available: !painting.available },
+                { new: true }
+            )
         );
 
-        res.json(updatedPainting);
-    } catch (err) {
-        console.log(err);
-        res.status(502).json({ err: "Error updating painting availability", details: err.message });
+        const updatedPaintings = await Promise.all(updatePromises);
+
+        res.json({
+            message: "Paintings availability successfully updated.",
+            updatedPaintings
+        });
+
+    } catch (error) {
+        console.error('Error updating paintings:', error);
+        res.status(502).json({ message: 'Failed to update paintings', error });
     }
 });
+
 
 
 router.delete("/:id", auth, async (req, res) => {
