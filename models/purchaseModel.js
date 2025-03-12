@@ -4,11 +4,15 @@ const Joi = require("joi");
 
 
 const purchaseSchema = new mongoose.Schema({
+
     paintings: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "paintings",
     }],
-    total: Number,
+    checked: {
+        type: Boolean, default: false
+    },
+    total: String,
     first_name: String,
     last_name: String,
     email: String,
@@ -27,11 +31,10 @@ exports.PurchaseModel = mongoose.model("purchases", purchaseSchema);
 
 
 exports.validatePurchase = (_reqBody) => {
-    const Joi = require('joi').extend(require('joi-objectid')); // Ensure Joi ObjectId is extended
 
     let joiSchema = Joi.object({
-        paintings: Joi.array().items(Joi.objectId().required()).min(1).required(),
-        total: Joi.number().min(0).required(),
+        paintings: Joi.array().items(Joi.string().required()).min(1).required(),
+        total: Joi.string().min(1).required(),
         first_name: Joi.string().min(2).max(50).required(),
         last_name: Joi.string().min(2).max(50).required(),
         email: Joi.string().min(4).max(200).email().required(),
@@ -40,7 +43,9 @@ exports.validatePurchase = (_reqBody) => {
         country: Joi.string().min(2).max(20).required(),
         zip_code: Joi.string().min(2).max(20).required(),
         city: Joi.string().min(2).max(20).required(),
-        state: Joi.string().min(2).max(20).when('country', { is: 'USA', then: Joi.required() }),
+        state: Joi.string()
+            .allow('')
+            .when('country', { is: 'United States', then: Joi.string().min(2).max(20).required() }),
     })
     return joiSchema.validate(_reqBody);
 }
