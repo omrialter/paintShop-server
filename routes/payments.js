@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const paypal = require('../services/paypal');
+const sendEmail = require("../services/mails");
 
 
 
@@ -27,11 +28,16 @@ router.get('/completeOrder', async (req, res) => {
         const token = req.query.token;
         await paypal.capturePayment(token);
         res.send('Payment successfully captured');
+        const subject = "New Purchase";
+        const text = "Some one made a purchase, go check for more details in the website!";
+        await sendEmail(subject, text);
     } catch (error) {
         console.error('Error capturing payment:', error);
         res.status(500).send('Error: ' + error);
     }
 });
+
+
 
 
 
