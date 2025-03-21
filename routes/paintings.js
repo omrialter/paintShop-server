@@ -18,15 +18,29 @@ router.get("/", async (req, res) => {
 })
 
 router.get("/allPaintings", async (req, res) => {
+    const perPage = parseInt(req.query.limit) || 9;  // dynamically get limit
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+
     try {
-        let data = await PaintingModel.find({})
-        res.json(data)
-    }
-    catch (err) {
+        const paintings = await PaintingModel.find({})
+            .limit(perPage)
+            .skip((page - 1) * perPage);
+
+        const totalPaintings = await PaintingModel.countDocuments({});
+
+        res.json({
+            paintings,
+            currentPage: page,
+            perPage,
+            totalPaintings,
+            totalPages: Math.ceil(totalPaintings / perPage)
+        });
+    } catch (err) {
         console.log(err);
-        res.status(502).json({ err })
+        res.status(502).json({ err });
     }
-})
+});
+
 
 router.get("/OnePainting/:id", async (req, res) => {
     try {
